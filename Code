@@ -1,0 +1,87 @@
+import tkinter as tk
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+
+# Create a DecisionTreeClassifier model and fit it with your training data (X_train, y_train)
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)  # Uncomment this line when you have X_train and y_train ready
+
+# Create the main window
+root = tk.Tk()
+root.title("Flight Severity Prediction")
+
+# Define input fields in the global scope
+entry_days_since_inspection = tk.Entry(root)
+entry_total_safety_complaints = tk.Entry(root)
+entry_accident_type_code = tk.Entry(root)
+entry_violations = tk.Entry(root)
+entry_safety_score = tk.Entry(root)
+entry_control_metric = tk.Entry(root)
+entry_turbulence = tk.Entry(root)
+entry_cabin_temperature = tk.Entry(root)
+entry_max_elevation = tk.Entry(root)
+entry_adverse_weather_metric = tk.Entry(root)
+
+# Place labels and entry fields for user input
+tk.Label(root, text="Days Since Inspection (1-23):").grid(row=0, column=0)
+entry_days_since_inspection.grid(row=0, column=1)
+
+tk.Label(root, text="Total Safety Complaints (0-54):").grid(row=1, column=0)
+entry_total_safety_complaints.grid(row=1, column=1)
+
+tk.Label(root, text="Accident Type Code (1-7):").grid(row=2, column=0)
+entry_accident_type_code.grid(row=2, column=1)
+
+tk.Label(root, text="Number of Violations (0-5):").grid(row=3, column=0)
+entry_violations.grid(row=3, column=1)
+
+tk.Label(root, text="Safety Score (0-100):").grid(row=4, column=0)  # Corrected row number
+entry_safety_score.grid(row=4, column=1)  # Corrected row number
+
+tk.Label(root, text="Control Metric (0-100):").grid(row=5, column=0)  # Corrected row number
+entry_control_metric.grid(row=5, column=1)  # Corrected row number
+
+tk.Label(root, text="Turbulence In g-forces (0.13-0.88):").grid(row=6, column=0)  # Corrected row number
+entry_turbulence.grid(row=6, column=1)  # Corrected row number
+
+tk.Label(root, text="Cabin Temperature (74.7-97.5):").grid(row=7, column=0)
+entry_cabin_temperature.grid(row=7, column=1)
+
+tk.Label(root, text="Max Elevation (832-64.3k):").grid(row=8, column=0)
+entry_max_elevation.grid(row=8, column=1)
+
+tk.Label(root, text="Adverse Weather Metric (0-2.37):").grid(row=9, column=0)
+entry_adverse_weather_metric.grid(row=9, column=1)
+
+# Function to predict severity based on user input
+def predict_severity():
+    Days_Since_Inspection = int(entry_days_since_inspection.get())
+    Total_Safety_Complaints = int(entry_total_safety_complaints.get())
+    Accident_Type_Code = int(entry_accident_type_code.get())
+    Violations = int(entry_violations.get())
+    Safety_Score = float(entry_safety_score.get())
+    Control_Metric = float(entry_control_metric.get())
+    Turbulence_In_gforces = float(entry_turbulence.get())
+    Cabin_Temperature = float(entry_cabin_temperature.get())
+    Max_Elevation = float(entry_max_elevation.get())
+    Adverse_Weather_Metric = float(entry_adverse_weather_metric.get())
+
+    user_input = [Days_Since_Inspection, Total_Safety_Complaints, Accident_Type_Code, Violations,
+                  Safety_Score, Control_Metric, Turbulence_In_gforces, Cabin_Temperature,
+                  Max_Elevation, Adverse_Weather_Metric]
+
+    user_input_df = pd.DataFrame([user_input], columns=X_train.columns)
+    predicted_severity = model.predict(user_input_df)
+    severity_mapping = {0: 'Minor', 1: 'Moderate', 2: 'Major', 3: 'High'}
+    predicted_severity_label.config(text=f"Predicted Severity: {severity_mapping[predicted_severity[0]]}")
+
+# Create a button to predict severity
+predict_button = tk.Button(root, text="Predict Severity", command=predict_severity)
+predict_button.grid(row=10, column=0, columnspan=2)  # Corrected row number
+
+# Label to display predicted severity
+predicted_severity_label = tk.Label(root, text="")
+predicted_severity_label.grid(row=11, column=0, columnspan=2)  # Corrected row number
+
+# Start the Tkinter main loop
+root.mainloop()
